@@ -1,12 +1,10 @@
 /*
   Write a method `happy_new_year` that outputs numbers starting at 10 and
-   counting down to 1. After reaching 1, print out "Happy New Year!"
+  counting down to 1. After reaching 1, print out "Happy New Year!"
 */
 function happyNewYear() {
-  let counter = 10;
-  while (counter > 0) {
+  for (let counter = 10; counter > 0; counter--) {
     console.log(counter);
-    counter--;
   }
   console.log("Happy New Year!");
 }
@@ -42,17 +40,16 @@ function fizzbuzz(num) {
 */
 function reverseString(str) {
   let reversedStr = "";
-  for (let i = 0; i < str.length; i++) {
-    reversedStr = str[i] + reversedStr;
+  for (let i = str.length - 1; i >= 0; i--) {
+    reversedStr += str[i];
   }
   return reversedStr;
 }
 
-
 /*
-Write a function `square_integers()` that takes one argument, a list of
-integers and returns the list of squared elements.
+  Write a function `square_integers()` that takes one argument, a list of
+  integers and returns the list of squared elements.
 */
-function square_integers(int_list){
-  return int_list.map((num) => Math.pow(num, 2) )
+function squareIntegers(intList) {
+  return intList.map(num => num ** 2);
 }

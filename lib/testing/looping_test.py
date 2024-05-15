@@ -12,17 +12,20 @@ class TestHappyNewYear:
         '''prints 10 to 1 countdown then "Happy New Year!"'''
         captured_out = io.StringIO()
         sys.stdout = captured_out
-        happy_new_year()
-        sys.stdout = sys.__stdout__
+        try:
+            happy_new_year()
+        finally:
+            sys.stdout = sys.__stdout__
         answer = captured_out.getvalue()
         
-        #answer.split(\n) produces a list that ends in ''
-        answer_list = answer.split('\n')
-        #second to last value should be the HNY string
-        assert answer_list[-2] == "Happy New Year!", "Your final line does not match 'Happy New Year!', check spelling/capitalization!"
-        digit_strings = [str(i) for i in range(1,11)]
-        remaining_digits = [i for i in digit_strings if i not in answer_list] 
-        assert remaining_digits == [], f"You didn't print all digits 1-10, missing {', '.join(remaining_digits)}"
+        # answer.split(\n) produces a list that ends in ''
+        answer_list = answer.strip().split('\n')
+        # Last value should be the HNY string
+        assert answer_list[-1] == "Happy New Year!", "Your final line does not match 'Happy New Year!', check spelling/capitalization!"
+        digit_strings = [str(i) for i in range(10, 0, -1)]
+        missing_digits = [i for i in digit_strings if i not in answer_list]
+        assert not missing_digits, f"You didn't print all digits 10-1, missing {', '.join(missing_digits)}"
+
 
 class TestSquareIntegers:
     '''square_integers() in looping.py'''
@@ -32,6 +35,7 @@ class TestSquareIntegers:
         assert(square_integers([1, 2, 3, 4, 5]) == [1, 4, 9, 16, 25])
         assert(square_integers([-1, -2, -3, -4, -5]) == [1, 4, 9, 16, 25])
 
+
 class TestFizzBuzz:
     '''fizzbuzz() in looping.py'''
 
@@ -39,20 +43,28 @@ class TestFizzBuzz:
         '''prints 1 to 100 with fizz 3s, buzz 5s, fizzbuzz 3and5s'''
         captured_out = io.StringIO()
         sys.stdout = captured_out
-        fizzbuzz()
-        sys.stdout = sys.__stdout__
-        answer = captured_out.getvalue()
-        assert len(answer) != 0, "Nothing printed! Check your loop condition. Also do you have print statements?"
+        try:
+            fizzbuzz()
+        finally:
+            sys.stdout = sys.__stdout__
+        answer = captured_out.getvalue().strip()
+        assert answer, "Nothing printed! Check your loop condition. Also, do you have print statements?"
         assert "Fizz" in answer, "The string 'Fizz' not found in your answer, check spelling/capitalization!"
         assert "Buzz" in answer, "The string 'Buzz' not found in your answer, check spelling/capitalization!"
-        i = 1
-        for line in answer.split('\n'):
-            if(line): #answer.split(\n) produces a list that ends in ''
-                if i % 15 == 0: assert line == "FizzBuzz", f"Should have printed 'Buzz' when number is {i}, got {line} instead"
-                elif i % 3 == 0: assert line == "Fizz", f"Should have printed 'Fizz' when number is {i}, got {line} instead"
-                elif i % 5 == 0: assert line == "Buzz", f"Should have printed 'Buzz' when number is {i}, got {line} instead"
-                else: assert str(i) == line, f"Should have printed {i}, got {line} instead"
-                i += 1
         
-        i = i - 1
-        assert i == 100, f"Only looped {i} times, should have looped 100 times. Check your loop condition!"    
+        expected_output = []
+        for i in range(1, 101):
+            if i % 15 == 0:
+                expected_output.append("FizzBuzz")
+            elif i % 3 == 0:
+                expected_output.append("Fizz")
+            elif i % 5 == 0:
+                expected_output.append("Buzz")
+            else:
+                expected_output.append(str(i))
+        
+        actual_output = answer.split('\n')
+        for expected, actual in zip(expected_output, actual_output):
+            assert expected == actual, f"Expected {expected}, but got {actual}"
+        
+        assert len(actual_output) == 100, f"Only looped {len(actual_output)} times, should have looped 100 times. Check your loop condition!"
